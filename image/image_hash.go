@@ -33,7 +33,7 @@ func ImageToBigInt(img Image) *big.Int {
 // Returns []byte represensation of an Image
 // This function is used to define the PxlBytes field of an image in NewImage()
 // Image -> big.Int -> fr.Element -> []byte
-func ImageToBytes(img Image) []byte {
+func BigInt_to_Fr_Bytes(img Image) []byte {
 	var fe fr.Element
 	imgBigInt := ImageToBigInt(img)
 	fe.SetBigInt(imgBigInt)

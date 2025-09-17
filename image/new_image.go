@@ -68,7 +68,7 @@ func NewImage(flag string) (Image, error) {
 		}
 	}
 
-	b := ImageToBytes(newImage)
+	b := BigInt_to_Fr_Bytes(newImage)
 	newImage.PxlBytes = b
 
 	return newImage, nil
