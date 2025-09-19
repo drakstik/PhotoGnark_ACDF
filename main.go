@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	examples.Example_2_Run()
+	examples.Generator_Example()
 }

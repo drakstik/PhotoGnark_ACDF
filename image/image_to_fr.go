@@ -1,6 +1,8 @@
 package image
 
-import "github.com/consensys/gnark/frontend"
+import (
+	"github.com/consensys/gnark/frontend"
+)
 
 // (X,Y) location of pixle -> index location in a single array of pixels
 func To_1D_Index(x uint64, y uint64) uint64 {
@@ -27,8 +29,23 @@ func ImageToFr(img Image) Fr_Image {
 		fr_image.Pxls[i] = PixelToFr(img.Pxls[i])
 	}
 
-	// Set PxlBytes
+	// Set PxlBytes & Provenance fields
 	fr_image.PxlBytes = img.PxlBytes
+	fr_image.Provenance = ProvenanceToFr(img.Provenance)
 
 	return fr_image
+}
+
+// Return []Fr_Provenance as a Gnark-friendly mirror represenation of an []Provenance
+func ProvenanceToFr(provenance [P]Provenance) [P]Fr_Provenance {
+	p := [P]Fr_Provenance{}
+
+	for i, v := range provenance {
+		p[i] = Fr_Provenance{
+			Tr_Name:  frontend.Variable(v.Tr_Name),
+			Tr_Bound: frontend.Variable(v.Tr_Bound),
+		}
+	}
+
+	return p
 }

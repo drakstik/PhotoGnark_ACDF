@@ -66,8 +66,15 @@ func Example_1_Admin() (Test_ProverKeys, Test_VerifierKeys, error) {
 
 func Example_1_Prover(pr_k Test_ProverKeys) (groth16.Proof, []byte, signature.PublicKey, []byte, error) {
 	/* Create a new image and user */
-	img, _ := image.NewImage("random")
+	img, err := image.NewImage("random")
+	if err != nil {
+		fmt.Println("Error while new image: " + err.Error())
+		return nil, nil, nil, nil, err
+	}
+
 	prover := photoproof.NewUser()
+
+	fmt.Println(img)
 
 	/* Sign the image */
 	digest := image.ImageHash(img) // Use ToBytes as hash
@@ -80,6 +87,7 @@ func Example_1_Prover(pr_k Test_ProverKeys) (groth16.Proof, []byte, signature.Pu
 	}
 
 	// fmt.Println(img.ToFr())
+	fmt.Println(image.ImageToFr(img))
 
 	prover_circuit := Circuit_Example_1{
 		Img:     image.ImageToFr(img),
@@ -99,6 +107,7 @@ func Example_1_Prover(pr_k Test_ProverKeys) (groth16.Proof, []byte, signature.Pu
 		return nil, nil, nil, nil, err
 	}
 
+	fmt.Println("HEre")
 	// Create pcd_proof_out that the secret witness adheres to the compliance predicate, using the given proving key (runs Define())
 	pcd_proof_out, err := groth16.Prove(compliance_predicate, pr_k.ProvingKey, secret_witness_out)
 	if err != nil {
@@ -106,6 +115,8 @@ func Example_1_Prover(pr_k Test_ProverKeys) (groth16.Proof, []byte, signature.Pu
 	}
 
 	fmt.Println("********Test_Prover was successful!********")
+
+	fmt.Println("HEre")
 
 	return pcd_proof_out, digest, prover.PublicKey, signature, err
 
@@ -117,6 +128,8 @@ func Example_1_Verifier(proof groth16.Proof, vk Test_VerifierKeys, digest []byte
 		Img:     image.ImageToFr(dummy_image), // Secret value can be dummy value when verifying
 		ImgHash: digest,
 	}
+
+	fmt.Println("HEre")
 
 	// Recreate a secret witness with public values
 	secret_witness, err := frontend.NewWitness(&assignment, ecc.BN254.ScalarField())

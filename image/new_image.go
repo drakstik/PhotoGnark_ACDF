@@ -68,8 +68,19 @@ func NewImage(flag string) (Image, error) {
 		}
 	}
 
-	b := BigInt_to_Fr_Bytes(newImage)
-	newImage.PxlBytes = b
+	// Set PxlBytes & Provenance fields
+	newImage.PxlBytes = BigInt_to_Fr_Bytes(newImage)
+	newImage.Provenance = [P]Provenance{
+		{
+			Tr_Name:  0, // identity
+			Tr_Bound: 1,
+		},
+		// TODO
+		// Provenance{
+		//	    Tr_Name: "increase total contrast"
+		//		Tr_Bound: 10
+		// }
+	}
 
 	return newImage, nil
 }

@@ -2,6 +2,7 @@ package image
 
 import (
 	"github.com/consensys/gnark/frontend"
+	"github.com/consensys/gnark/std/signature/eddsa"
 )
 
 // [Gnark-friendly] location of a pixel
@@ -21,8 +22,32 @@ type Fr_Pixel struct {
 	Loc Fr_PixelLocation     `gnark:",inherit"`
 }
 
+// [Gnark-friendly] Object representing an Fr_Image's transformation bound credit.
+type Fr_Provenance struct {
+	Tr_Name  frontend.Variable
+	Tr_Bound frontend.Variable
+}
+
 // [Gnark-friendly] An image object
 type Fr_Image struct {
-	Pxls     [N2]Fr_Pixel      `gnark:",inherit"`
-	PxlBytes frontend.Variable `gnark:",inherit"`
+	Pxls       [N2]Fr_Pixel      `gnark:",inherit"`
+	PxlBytes   frontend.Variable `gnark:",inherit"`
+	Provenance [P]Fr_Provenance  `gnark:",inherit"`
+}
+
+/*------------------------------------------ Gnark-Friendly Area --------------------------------------*/
+// Represents an area inside an Fr_Image.
+type Fr_Area struct {
+	Loc    Fr_PixelLocation
+	Width  frontend.Variable // Starting at 1
+	Height frontend.Variable // Starting at 1
+}
+
+/*------------------------------------------ Gnark-Friendly Z --------------------------------------*/
+type Fr_Z struct {
+	Img       Fr_Image
+	PublicKey eddsa.PublicKey
+	// Original signature and hash
+	OriginalSignature eddsa.Signature
+	OriginalHash      frontend.Variable
 }

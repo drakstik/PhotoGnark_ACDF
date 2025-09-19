@@ -14,17 +14,30 @@ import (
 // Returns big.Int representation of an Image
 // Pack each pixel RGB values into a single big.Int
 func ImageToBigInt(img Image) *big.Int {
+	// Step 1: Pack pixels into []uint32
 	packed := make([]uint32, len(img.Pxls))
 	for i, px := range img.Pxls {
 		packed[i] = uint32(px.RGB[0])<<16 | uint32(px.RGB[1])<<8 | uint32(px.RGB[2])
 	}
 
+	// Step 2: Build big.Int from pixels
 	result := big.NewInt(0)
 	for _, v := range packed {
 		// Shift the current value by 32 bits to the left
 		result.Lsh(result, 32)
 		// Add the next uint32
 		result.Add(result, big.NewInt(int64(v)))
+	}
+
+	// Step 3: Append Provenance info
+	for _, prov := range img.Provenance {
+		// Add Tr_Name
+		result.Lsh(result, 64) // shift 64 bits for uint64
+		result.Add(result, new(big.Int).SetUint64(prov.Tr_Name))
+
+		// Add Tr_Bound
+		result.Lsh(result, 64)
+		result.Add(result, new(big.Int).SetUint64(prov.Tr_Bound))
 	}
 
 	return result
