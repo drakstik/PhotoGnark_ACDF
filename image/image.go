@@ -39,15 +39,14 @@ type Image struct {
 
 	PxlBytes []byte // Set by ImageToBytes()
 
-	// TODO: This Provenance field must be mirrored into an Fr_Image
-	//			- It is mainly used to maintain provenance length by setting an upper bound to transformations
-	//				For example: Cropping can be bound to 25% of the image, so for each cropping the % allowed
-	//							 should be reduced acordingly, and check that provenance bound is != 0.
-	//			- If provenance bounds are stored in Provenance, then we expose the amount of transformation that
-	//				has occured so far. But this is OK because the params of the transformation are not known
-	//				as well as previous pixel values, nor the order of transformations. Just the amount of the
-	//				transformation bounds credit utilized is revealed.
-	//			- Provenance should also be added to the PxlBytes for hashing & signing
+	// This field is a metadata field that sets upper bounds to transformations,
+	// 	For example: To maintain total contrast increase bounded at 10% of RGB values, the transformation's
+	//				  Apply() function can assert that bound is != 0 and bound is !> 10%, or we can check
+	//				  that the provenance's bound is exactly the value we expect it to be after the
+	// 				  given transformation occured.
+	// This means the verifier will be able to see how much of the allocated provenance bounds has been used up
+	// so far. This does not reveal the previous pixel values, the params of the transformation, nor the order of
+	// the transformation. Provenance, alongside Pxls, is used to generate PxlBytes.
 	Provenance [P]Provenance
 }
 

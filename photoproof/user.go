@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 
+	"github.com/consensys/gnark-crypto/hash"
 	"github.com/consensys/gnark-crypto/signature"
 	ceddsa "github.com/consensys/gnark-crypto/signature/eddsa"
 	"github.com/drakstik/PhotoGnark_ACDF/image"
@@ -30,16 +31,17 @@ func NewUser() User {
 
 }
 
-// Out-of-circuit signing function
+// Out-of-circuit signing function,
+// Hashes the image using ImageHash and signs it with the user's secret key.
 func (user User) Sign(img image.Image) ([]byte, error) {
 	// Hash the img
 	digest := image.ImageHash(img)
 
 	// Instantiate MIMC BN254 hash function, to be used in signing the image
-	// hFunc := hash.MIMC_BN254.New()
+	hFunc := hash.MIMC_BN254.New()
 
 	// Sign the digest with the hash function
-	signature, err := user.SecretKey.Sign(digest, nil)
+	signature, err := user.SecretKey.Sign(digest, hFunc)
 	if err != nil {
 		fmt.Println("Error while signing image: " + err.Error())
 		return nil, err

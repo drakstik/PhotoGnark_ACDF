@@ -13,14 +13,15 @@ import (
 func NewCamera() Camera {
 	prover, verifier, admin := Generator(&photoproof.PhotoGnark{})
 	return Camera{
-		Admin:       admin,
-		Photographs: []Photograph{},
-		Prover:      prover,
-		Verifier:    verifier,
+		Admin:        admin,
+		Photographs:  []photoproof.Photograph{},
+		ProvingKey:   prover,
+		VerifyingKey: verifier,
 	}
 }
 
-func Generator(circuit *photoproof.PhotoGnark) (ProverKeys, VerifierKeys, photoproof.User) {
+func Generator(circuit *photoproof.PhotoGnark) (photoproof.ProverKeys, photoproof.VerifierKeys, photoproof.User) {
+	fmt.Println("********New Camera********")
 	// Create a new user, including their secret key.
 	user := photoproof.NewUser()
 
@@ -28,19 +29,19 @@ func Generator(circuit *photoproof.PhotoGnark) (ProverKeys, VerifierKeys, photop
 	compliance_predicate_id, err := frontend.Compile(ecc.BN254.ScalarField(), r1cs.NewBuilder, circuit)
 	if err != nil {
 		fmt.Println("[Generator]: ERROR while compiling constraint system")
-		return ProverKeys{}, VerifierKeys{}, photoproof.User{}
+		return photoproof.ProverKeys{}, photoproof.VerifierKeys{}, photoproof.User{}
 	}
 
 	// Generate PCD Keys from the compliance_predicate
 	provingKey, verifyingKey, err := groth16.Setup(compliance_predicate_id)
 	if err != nil {
 		fmt.Println("[Generator]: ERROR while generating PCD Keys from the constraint system")
-		return ProverKeys{}, VerifierKeys{}, photoproof.User{}
+		return photoproof.ProverKeys{}, photoproof.VerifierKeys{}, photoproof.User{}
 	}
 
-	fmt.Println("********PhotoGnark Generator was successful!********")
+	fmt.Println("********[Camera] Generator was successful!********")
 
-	return ProverKeys{ProvingKey: provingKey, Original_PublicKey: user.PublicKey},
-		VerifierKeys{VerifyingKey: verifyingKey, Original_PublicKey: user.PublicKey},
+	return photoproof.ProverKeys{ProvingKey: provingKey, Original_PublicKey: user.PublicKey},
+		photoproof.VerifierKeys{VerifyingKey: verifyingKey, Original_PublicKey: user.PublicKey},
 		user
 }
