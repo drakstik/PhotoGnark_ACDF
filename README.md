@@ -6,7 +6,7 @@ This project uses Gnark (a Golang package for zk-SNARKs) to implement a PhotoPro
 
 ## Out-of-Circuit vs. In-circuit
 
-In this project, normal Golang computations are called "out-of-circuit" and can be mirrored into an "in-cricuit" computation.
+In this project, normal Golang computations are called "out-of-circuit" and can be mirrored into an "in-cricuit" computation/assertions.
 
 Similarly a normal Golang object can be mirrored into a Gnark-friendly object, which can be manipulated by computations and assertions that occur within a [Gnark circuit](https://docs.gnark.consensys.io/Concepts/circuits).
 
